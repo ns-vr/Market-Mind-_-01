@@ -11,7 +11,7 @@ These agents use Google Gemini models for analysis and reasoning, while financia
 
 ### AI Financial Intelligence for Indian Investors
 
-MarketMind is an AI-powered financial intelligence platform built for the **ET AI Hackathon 2026**.
+MarketMind is an AI-powered financial intelligence platform built for the ** Hackathon 2026**.
 
 It merges two problem statements:
 
