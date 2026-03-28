@@ -1,0 +1,2586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MarketMind — Your AI Financial Intelligence Layer</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0A0B0F;
+    --bg2: #111318;
+    --bg3: #181C24;
+    --card: #1A1E28;
+    --card2: #1F2435;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --text: #F0F2F8;
+    --muted: #8B91A8;
+    --muted2: #555C73;
+    --accent: #E8FF47;
+    --accent2: #B8CC20;
+    --blue: #4D9CFF;
+    --blue2: #1A6EE8;
+    --green: #2ECC8A;
+    --red: #FF4D6A;
+    --orange: #FF8C42;
+    --purple: #A78BFA;
+    --teal: #22D3EE;
+    --font-display: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ===== SCROLLBAR ===== */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+
+  /* ===== LAYOUT ===== */
+  .shell { display: flex; min-height: 100vh; }
+
+  /* ===== SIDEBAR ===== */
+  .sidebar {
+    width: 240px;
+    min-height: 100vh;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    z-index: 100;
+    overflow-y: auto;
+  }
+
+  .logo-wrap {
+    padding: 24px 20px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--accent);
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .logo-dot {
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.7); }
+  }
+
+  .logo-sub {
+    font-size: 10px;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  .profile-mini {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .avatar {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--blue2), var(--purple));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: var(--font-display);
+    color: white;
+    flex-shrink: 0;
+  }
+
+  .profile-info { flex: 1; min-width: 0; }
+  .profile-name { font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .profile-tag { font-size: 11px; color: var(--green); font-family: var(--font-mono); }
+
+  nav { padding: 12px 0; flex: 1; }
+
+  .nav-section {
+    padding: 8px 20px 4px;
+    font-size: 10px;
+    font-family: var(--font-mono);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted2);
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 20px;
+    font-size: 13.5px;
+    color: var(--muted);
+    cursor: pointer;
+    border-radius: 0;
+    transition: all 0.15s;
+    font-weight: 400;
+    border-left: 2px solid transparent;
+    position: relative;
+  }
+
+  .nav-item:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+  .nav-item.active {
+    color: var(--accent);
+    background: rgba(232,255,71,0.05);
+    border-left-color: var(--accent);
+    font-weight: 500;
+  }
+
+  .nav-icon { font-size: 15px; width: 18px; text-align: center; flex-shrink: 0; }
+
+  .nav-badge {
+    margin-left: auto;
+    background: var(--red);
+    color: white;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-family: var(--font-mono);
+  }
+
+  .sidebar-footer {
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
+  }
+
+  .market-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .status-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+
+  /* ===== MAIN CONTENT ===== */
+  .main {
+    margin-left: 240px;
+    flex: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ===== TOP BAR ===== */
+  .topbar {
+    height: 60px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 28px;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    background: rgba(10,11,15,0.92);
+    backdrop-filter: blur(12px);
+    z-index: 50;
+  }
+
+  .topbar-title {
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 700;
+    flex: 1;
+  }
+
+  .topbar-chips { display: flex; gap: 8px; align-items: center; }
+
+  .chip {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-family: var(--font-mono);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    background: var(--bg2);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .chip:hover { border-color: var(--border2); color: var(--text); }
+  .chip.active { border-color: var(--accent); color: var(--accent); background: rgba(232,255,71,0.07); }
+
+  .index-pill {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-family: var(--font-mono);
+    font-weight: 500;
+  }
+
+  .index-pill.up { background: rgba(46,204,138,0.1); color: var(--green); border: 1px solid rgba(46,204,138,0.2); }
+  .index-pill.dn { background: rgba(255,77,106,0.1); color: var(--red); border: 1px solid rgba(255,77,106,0.2); }
+
+  /* ===== PAGE SECTIONS ===== */
+  .page { display: none; padding: 28px; }
+  .page.active { display: block; animation: fadeIn 0.2s ease; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ===== HERO BANNER ===== */
+  .hero {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 32px 36px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -40px;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(232,255,71,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-greeting {
+    font-size: 12px;
+    font-family: var(--font-mono);
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .hero-title {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 10px;
+  }
+
+  .hero-title span { color: var(--accent); }
+
+  .hero-sub {
+    font-size: 14px;
+    color: var(--muted);
+    max-width: 480px;
+    line-height: 1.6;
+  }
+
+  .hero-score {
+    flex-shrink: 0;
+    text-align: center;
+  }
+
+  .score-ring {
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    border: 3px solid var(--accent);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(232,255,71,0.05);
+    margin: 0 auto 8px;
+  }
+
+  .score-num {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .score-label { font-size: 10px; color: var(--muted); font-family: var(--font-mono); }
+
+  /* ===== GRID LAYOUTS ===== */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .grid-auto { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
+
+  /* ===== CARDS ===== */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+  }
+
+  .card-sm {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .card-title {
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .card-action {
+    font-size: 12px;
+    color: var(--blue);
+    cursor: pointer;
+    font-family: var(--font-mono);
+  }
+
+  /* ===== METRIC TILES ===== */
+  .metric-tile {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+  }
+
+  .metric-label {
+    font-size: 11px;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 8px;
+  }
+
+  .metric-value {
+    font-family: var(--font-display);
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .metric-change {
+    font-size: 12px;
+    font-family: var(--font-mono);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .metric-change.up { color: var(--green); }
+  .metric-change.dn { color: var(--red); }
+  .metric-change.neutral { color: var(--muted); }
+
+  /* ===== STOCK ROW ===== */
+  .stock-row {
+    display: flex;
+    align-items: center;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.1s;
+    border-radius: 4px;
+    gap: 12px;
+  }
+
+  .stock-row:last-child { border-bottom: none; }
+  .stock-row:hover { background: rgba(255,255,255,0.03); padding-left: 6px; }
+
+  .stock-ticker {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    width: 80px;
+  }
+
+  .stock-name { flex: 1; font-size: 13px; color: var(--muted); }
+
+  .stock-price {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    text-align: right;
+    width: 80px;
+  }
+
+  .stock-chg {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    text-align: right;
+    width: 70px;
+  }
+
+  .stock-chg.up { color: var(--green); }
+  .stock-chg.dn { color: var(--red); }
+
+  .mini-bar {
+    width: 60px;
+    height: 24px;
+    position: relative;
+  }
+
+  /* ===== NEWS CARD ===== */
+  .news-item {
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+  }
+
+  .news-item:last-child { border-bottom: none; }
+  .news-item:hover .news-title { color: var(--blue); }
+
+  .news-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+
+  .news-tag {
+    font-size: 10px;
+    font-family: var(--font-mono);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+
+  .news-tag.bullish { background: rgba(46,204,138,0.12); color: var(--green); }
+  .news-tag.bearish { background: rgba(255,77,106,0.12); color: var(--red); }
+  .news-tag.neutral { background: rgba(139,145,168,0.15); color: var(--muted); }
+  .news-tag.breaking { background: rgba(255,140,66,0.15); color: var(--orange); }
+
+  .news-time { font-size: 11px; color: var(--muted2); font-family: var(--font-mono); }
+
+  .news-title {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.45;
+    color: var(--text);
+    transition: color 0.15s;
+    margin-bottom: 6px;
+  }
+
+  .news-ai-summary {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.55;
+    padding: 8px 10px;
+    background: var(--bg3);
+    border-radius: var(--radius-sm);
+    border-left: 2px solid var(--accent);
+    margin-top: 6px;
+  }
+
+  .news-ai-label {
+    font-size: 10px;
+    color: var(--accent);
+    font-family: var(--font-mono);
+    letter-spacing: 0.06em;
+    margin-bottom: 3px;
+  }
+
+  /* ===== SIGNAL RADAR ===== */
+  .signal-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px;
+    border-radius: var(--radius-sm);
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+
+  .signal-item:hover { border-color: var(--border2); }
+
+  .signal-icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .signal-icon.buy { background: rgba(46,204,138,0.12); }
+  .signal-icon.sell { background: rgba(255,77,106,0.12); }
+  .signal-icon.watch { background: rgba(77,156,255,0.12); }
+  .signal-icon.alert { background: rgba(255,140,66,0.12); }
+
+  .signal-content { flex: 1; }
+  .signal-ticker { font-family: var(--font-mono); font-size: 12px; color: var(--muted); margin-bottom: 2px; }
+  .signal-text { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 4px; line-height: 1.4; }
+  .signal-conf { font-size: 11px; font-family: var(--font-mono); color: var(--muted2); }
+
+  .conf-bar {
+    display: inline-block;
+    height: 3px;
+    border-radius: 2px;
+    vertical-align: middle;
+    margin-right: 4px;
+  }
+
+  .conf-bar.high { width: 40px; background: var(--green); }
+  .conf-bar.med { width: 26px; background: var(--orange); }
+  .conf-bar.low { width: 14px; background: var(--muted2); }
+
+  /* ===== CHART PLACEHOLDER ===== */
+  .chart-placeholder {
+    width: 100%;
+    height: 160px;
+    border-radius: var(--radius-sm);
+    background: var(--bg3);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .chart-svg { width: 100%; height: 100%; }
+
+  /* ===== SECTION LABEL ===== */
+  .section-label {
+    font-size: 11px;
+    font-family: var(--font-mono);
+    color: var(--muted2);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ===== ONBOARDING FORM ===== */
+  .form-group { margin-bottom: 20px; }
+
+  .form-label {
+    display: block;
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 8px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .form-input {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 14px;
+    padding: 11px 14px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .form-input:focus { border-color: var(--accent); }
+
+  .form-input::placeholder { color: var(--muted2); }
+
+  .form-select {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 14px;
+    padding: 11px 14px;
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+    transition: border-color 0.15s;
+  }
+
+  .form-select:focus { border-color: var(--accent); }
+  .form-select option { background: var(--bg2); }
+
+  .tag-select { display: flex; flex-wrap: wrap; gap: 8px; }
+
+  .tag-option {
+    padding: 7px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-family: var(--font-mono);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+
+  .tag-option:hover { border-color: var(--border2); color: var(--text); }
+  .tag-option.selected { border-color: var(--accent); color: var(--accent); background: rgba(232,255,71,0.07); }
+
+  /* ===== BUTTONS ===== */
+  .btn {
+    padding: 11px 24px;
+    border-radius: var(--radius-sm);
+    font-size: 13.5px;
+    font-weight: 600;
+    font-family: var(--font-display);
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s;
+    letter-spacing: 0.02em;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #0A0B0F;
+  }
+
+  .btn-primary:hover { background: var(--accent2); transform: translateY(-1px); }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+
+  .btn-ghost:hover { border-color: var(--border2); color: var(--text); }
+
+  .btn-icon {
+    padding: 8px 12px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.15s;
+  }
+
+  .btn-icon:hover { border-color: var(--border2); color: var(--text); }
+
+  /* ===== AI CHAT ===== */
+  .ai-input-bar {
+    display: flex;
+    gap: 10px;
+    padding: 14px 18px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 20px;
+    align-items: center;
+  }
+
+  .ai-icon {
+    width: 28px; height: 28px;
+    background: var(--accent);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+    color: #0A0B0F;
+    font-weight: 700;
+    font-family: var(--font-display);
+  }
+
+  .ai-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-size: 14px;
+    font-family: var(--font-body);
+  }
+
+  .ai-input::placeholder { color: var(--muted2); }
+
+  .quick-asks { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+
+  .quick-ask {
+    padding: 7px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-family: var(--font-mono);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    cursor: pointer;
+    background: var(--bg2);
+    transition: all 0.15s;
+  }
+
+  .quick-ask:hover { border-color: var(--blue); color: var(--blue); }
+
+  /* ===== CHAT BUBBLES ===== */
+  .chat-wrap { display: flex; flex-direction: column; gap: 14px; margin-bottom: 20px; }
+
+  .chat-bubble {
+    max-width: 85%;
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .chat-user {
+    align-self: flex-end;
+    background: var(--blue2);
+    color: white;
+    border-radius: 12px 12px 2px 12px;
+  }
+
+  .chat-ai {
+    align-self: flex-start;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 12px 12px 12px 2px;
+    color: var(--text);
+  }
+
+  .chat-ai-label {
+    font-size: 10px;
+    color: var(--accent);
+    font-family: var(--font-mono);
+    margin-bottom: 6px;
+    letter-spacing: 0.06em;
+  }
+
+  /* ===== PORTFOLIO ===== */
+  .holding-row {
+    display: grid;
+    grid-template-columns: 1fr 80px 80px 90px 80px;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+
+  .holding-row:last-child { border-bottom: none; }
+
+  .holding-name { font-weight: 500; color: var(--text); }
+  .holding-ticker { font-family: var(--font-mono); font-size: 11px; color: var(--muted); }
+  .holding-num { font-family: var(--font-mono); font-size: 13px; text-align: right; }
+  .holding-num.up { color: var(--green); }
+  .holding-num.dn { color: var(--red); }
+
+  .table-header {
+    display: grid;
+    grid-template-columns: 1fr 80px 80px 90px 80px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 11px;
+    font-family: var(--font-mono);
+    color: var(--muted2);
+    text-align: right;
+    letter-spacing: 0.06em;
+  }
+
+  .table-header :first-child { text-align: left; }
+
+  /* ===== SCORE DIMENSIONS ===== */
+  .score-dim {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .score-dim:last-child { border-bottom: none; }
+
+  .dim-name { font-size: 13px; color: var(--text); width: 150px; flex-shrink: 0; }
+
+  .dim-bar-wrap { flex: 1; height: 6px; background: var(--bg3); border-radius: 3px; overflow: hidden; }
+  .dim-bar { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
+  .dim-val { font-family: var(--font-mono); font-size: 12px; color: var(--muted); width: 30px; text-align: right; }
+
+  /* ===== SECTOR TAGS ===== */
+  .sector-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+
+  .sector-tag {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-family: var(--font-mono);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+
+  /* ===== TABS ===== */
+  .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 18px; }
+
+  .tab {
+    padding: 10px 16px;
+    font-size: 13px;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    font-family: var(--font-mono);
+    transition: all 0.15s;
+  }
+
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* ===== NOTIFICATION ===== */
+  .notif {
+    display: flex;
+    gap: 12px;
+    padding: 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    margin-bottom: 10px;
+    cursor: pointer;
+    background: var(--bg3);
+    transition: border-color 0.15s;
+  }
+
+  .notif:hover { border-color: var(--border2); }
+
+  .notif-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 4px; flex-shrink: 0; }
+  .notif-content { flex: 1; }
+  .notif-title { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+  .notif-body { font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .notif-time { font-size: 11px; color: var(--muted2); font-family: var(--font-mono); margin-top: 4px; }
+
+  /* ===== MODAL ===== */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 28px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: fadeIn 0.2s ease;
+  }
+
+  .modal-title {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 6px;
+  }
+
+  .modal-sub { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
+
+  .modal-close {
+    position: absolute;
+    top: 20px; right: 24px;
+    font-size: 20px;
+    color: var(--muted);
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 18px;
+  }
+
+  /* ===== STEP INDICATOR ===== */
+  .steps { display: flex; gap: 0; margin-bottom: 24px; }
+
+  .step-item {
+    flex: 1;
+    padding: 8px 12px;
+    font-size: 11px;
+    font-family: var(--font-mono);
+    text-align: center;
+    border-bottom: 2px solid var(--border);
+    color: var(--muted2);
+    position: relative;
+  }
+
+  .step-item.done { border-bottom-color: var(--green); color: var(--green); }
+  .step-item.active { border-bottom-color: var(--accent); color: var(--accent); }
+
+  /* ===== PATTERN CARD ===== */
+  .pattern-card {
+    padding: 14px;
+    border-radius: var(--radius-sm);
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+
+  .pattern-card:hover { border-color: var(--blue); }
+
+  .pattern-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .pattern-name { font-weight: 500; font-size: 14px; flex: 1; }
+  .pattern-conf { font-family: var(--font-mono); font-size: 11px; }
+
+  .pattern-detail { font-size: 12px; color: var(--muted); line-height: 1.55; }
+
+  /* ===== RANGE SLIDER ===== */
+  input[type=range] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border);
+    outline: none;
+  }
+
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+  }
+
+  /* ===== SCROLLABLE LIST ===== */
+  .scroll-list { max-height: 320px; overflow-y: auto; }
+  .scroll-list::-webkit-scrollbar { width: 3px; }
+  .scroll-list::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+  /* ===== TICKER TAPE ===== */
+  .ticker-tape {
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 8px 0;
+    overflow: hidden;
+    white-space: nowrap;
+    margin-bottom: 24px;
+  }
+
+  .ticker-inner {
+    display: inline-flex;
+    gap: 0;
+    animation: tickerScroll 30s linear infinite;
+  }
+
+  @keyframes tickerScroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  .ticker-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 24px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    border-right: 1px solid var(--border);
+  }
+
+  .ticker-sym { color: var(--text); font-weight: 500; }
+  .ticker-val { color: var(--muted); }
+  .ticker-chg.up { color: var(--green); }
+  .ticker-chg.dn { color: var(--red); }
+
+  /* ===== BADGE ===== */
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .badge-accent { background: rgba(232,255,71,0.12); color: var(--accent); }
+  .badge-blue { background: rgba(77,156,255,0.12); color: var(--blue); }
+  .badge-green { background: rgba(46,204,138,0.12); color: var(--green); }
+  .badge-red { background: rgba(255,77,106,0.12); color: var(--red); }
+  .badge-purple { background: rgba(167,139,250,0.12); color: var(--purple); }
+  .badge-orange { background: rgba(255,140,66,0.15); color: var(--orange); }
+
+  /* ===== DIVIDER ===== */
+  .divider { height: 1px; background: var(--border); margin: 20px 0; }
+
+  /* ===== FLEX UTILS ===== */
+  .flex { display: flex; }
+  .flex-center { display: flex; align-items: center; }
+  .flex-between { display: flex; align-items: center; justify-content: space-between; }
+  .gap-8 { gap: 8px; }
+  .gap-12 { gap: 12px; }
+  .gap-16 { gap: 16px; }
+  .mt-8 { margin-top: 8px; }
+  .mt-12 { margin-top: 12px; }
+  .mt-16 { margin-top: 16px; }
+  .mt-20 { margin-top: 20px; }
+  .mb-12 { margin-bottom: 12px; }
+  .mb-16 { margin-bottom: 16px; }
+  .mb-20 { margin-bottom: 20px; }
+  .text-muted { color: var(--muted); }
+  .text-accent { color: var(--accent); }
+  .text-mono { font-family: var(--font-mono); }
+  .text-sm { font-size: 12px; }
+  .text-xs { font-size: 11px; }
+  .font-display { font-family: var(--font-display); }
+  .fw-700 { font-weight: 700; }
+  .fw-500 { font-weight: 500; }
+
+  /* ===== MINI SPARKLINE ===== */
+  .sparkline { display: inline-block; vertical-align: middle; }
+
+  /* ===== LOADING SHIMMER ===== */
+  .shimmer {
+    background: linear-gradient(90deg, var(--bg3) 25%, var(--card2) 50%, var(--bg3) 75%);
+    background-size: 200% 100%;
+    animation: shimmerAnim 1.5s infinite;
+    border-radius: 4px;
+  }
+
+  @keyframes shimmerAnim {
+    from { background-position: -200% 0; }
+    to { background-position: 200% 0; }
+  }
+
+  /* ===== ONBOARDING OVERLAY ===== */
+  #onboardingOverlay {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .onboard-card {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: 20px;
+    padding: 40px;
+    width: 100%;
+    max-width: 560px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .onboard-logo {
+    font-family: var(--font-display);
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+
+  .onboard-tagline { font-size: 14px; color: var(--muted); margin-bottom: 32px; }
+
+  .step-pills {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 28px;
+  }
+
+  .step-pill {
+    flex: 1;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border);
+    transition: background 0.3s;
+  }
+
+  .step-pill.done { background: var(--accent); }
+  .step-pill.active { background: var(--accent); opacity: 0.5; }
+
+  .step-content { display: none; }
+  .step-content.active { display: block; }
+
+  .step-title {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 6px;
+  }
+
+  .step-desc { font-size: 13px; color: var(--muted); margin-bottom: 24px; line-height: 1.6; }
+
+  .onboard-actions { display: flex; justify-content: space-between; margin-top: 28px; }
+
+</style>
+</head>
+<body>
+
+<!-- ===== ONBOARDING OVERLAY ===== -->
+<div id="onboardingOverlay">
+  <div class="onboard-card">
+    <div class="onboard-logo">MarketMind</div>
+    <div class="onboard-tagline">AI-powered financial intelligence. Built for India.</div>
+
+    <div class="step-pills">
+      <div class="step-pill active" id="sp1"></div>
+      <div class="step-pill" id="sp2"></div>
+      <div class="step-pill" id="sp3"></div>
+      <div class="step-pill" id="sp4"></div>
+    </div>
+
+    <!-- STEP 1 -->
+    <div class="step-content active" id="step1">
+      <div class="step-title">Who are you?</div>
+      <div class="step-desc">Let's build your personalized intelligence layer. This takes 2 minutes.</div>
+      <div class="form-group">
+        <label class="form-label">Your name</label>
+        <input class="form-input" type="text" id="userName" placeholder="e.g. Rohan Mehta">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Investor type</label>
+        <select class="form-select" id="investorType">
+          <option value="">Select your profile</option>
+          <option>Beginner investor (< 1 year)</option>
+          <option>Retail investor (1–5 years)</option>
+          <option>Active trader (frequent)</option>
+          <option>Long-term wealth builder</option>
+          <option>HNI / Advanced</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Monthly investable income (₹)</label>
+        <input class="form-input" type="number" id="income" placeholder="e.g. 25000">
+      </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="step-content" id="step2">
+      <div class="step-title">Risk appetite & goals</div>
+      <div class="step-desc">We'll tune our signals and news feed to match your style.</div>
+      <div class="form-group">
+        <label class="form-label">Risk tolerance</label>
+        <div class="tag-select" id="riskSelect">
+          <div class="tag-option" onclick="toggleTag(this, 'riskSelect')">Conservative</div>
+          <div class="tag-option" onclick="toggleTag(this, 'riskSelect')">Moderate</div>
+          <div class="tag-option" onclick="toggleTag(this, 'riskSelect')">Aggressive</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Investment goals (select all)</label>
+        <div class="tag-select" id="goalSelect">
+          <div class="tag-option" onclick="toggleTagMulti(this)">Wealth building</div>
+          <div class="tag-option" onclick="toggleTagMulti(this)">Retirement</div>
+          <div class="tag-option" onclick="toggleTagMulti(this)">Child education</div>
+          <div class="tag-option" onclick="toggleTagMulti(this)">Tax saving</div>
+          <div class="tag-option" onclick="toggleTagMulti(this)">Short-term gains</div>
+          <div class="tag-option" onclick="toggleTagMulti(this)">Emergency fund</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Investment horizon</label>
+        <select class="form-select">
+          <option>Less than 1 year</option>
+          <option>1–3 years</option>
+          <option selected>3–7 years</option>
+          <option>7+ years</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="step-content" id="step3">
+      <div class="step-title">Preferred sectors</div>
+      <div class="step-desc">We'll spotlight opportunities and news in the spaces you care about.</div>
+      <div class="form-group">
+        <div class="tag-select" id="sectorSelect">
+          <div class="tag-option" onclick="toggleTagMulti(this)">IT & Tech</div>
+          <div class="tag-option" onclick="toggleTagMulti(this)">Banking & Finance</div>
+          <div class="tag-option" onclick="toggleTagMulti(this)">Pharma</div>
+          <div class="tag-option" onclick="toggleTagMulti(this)">Auto</div>
+          <div class="tag-option" onclick="toggleTagMulti(this)">FMCG</div>
+          <div class="tag-option" onclick="toggleTagMulti(this)">Infra & Realty</div>
+          <div class="tag-option" onclick="toggleTagMulti(this)">Energy & Green</div>
+          <div class="tag-option" onclick="toggleTagMulti(this)">Defence</div>
+          <div class="tag-option" onclick="toggleTagMulti(this)">Metals</div>
+          <div class="tag-option" onclick="toggleTagMulti(this)">SME & Smallcap</div>
+          <div class="tag-option" onclick="toggleTagMulti(this)">Mutual Funds</div>
+          <div class="tag-option" onclick="toggleTagMulti(this)">IPOs</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">News language preference</label>
+        <div class="tag-select" id="langSelect">
+          <div class="tag-option selected" onclick="toggleTag(this, 'langSelect')">English</div>
+          <div class="tag-option" onclick="toggleTag(this, 'langSelect')">Hindi</div>
+          <div class="tag-option" onclick="toggleTag(this, 'langSelect')">Tamil</div>
+          <div class="tag-option" onclick="toggleTag(this, 'langSelect')">Telugu</div>
+          <div class="tag-option" onclick="toggleTag(this, 'langSelect')">Bengali</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 4 -->
+    <div class="step-content" id="step4">
+      <div class="step-title">Your profile is ready ✦</div>
+      <div class="step-desc">MarketMind will now personalize every signal, story, and insight for you. Here's what's waiting:</div>
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <div class="signal-item" style="margin-bottom: 0;">
+          <div class="signal-icon buy">📡</div>
+          <div class="signal-content">
+            <div class="signal-text">Opportunity Radar</div>
+            <div class="signal-conf">Live signals from corporate filings, bulk deals & insider trades</div>
+          </div>
+        </div>
+        <div class="signal-item" style="margin-bottom: 0;">
+          <div class="signal-icon watch">📰</div>
+          <div class="signal-content">
+            <div class="signal-text">Personalized News Feed</div>
+            <div class="signal-conf">AI-summarized, sentiment-tagged, portfolio-relevant news</div>
+          </div>
+        </div>
+        <div class="signal-item" style="margin-bottom: 0;">
+          <div class="signal-icon alert">💬</div>
+          <div class="signal-content">
+            <div class="signal-text">Market ChatGPT</div>
+            <div class="signal-conf">Multi-step portfolio-aware financial Q&A</div>
+          </div>
+        </div>
+        <div class="signal-item" style="margin-bottom: 0;">
+          <div class="signal-icon sell">🔍</div>
+          <div class="signal-content">
+            <div class="signal-text">Pattern Intelligence</div>
+            <div class="signal-conf">Real-time chart pattern detection with back-tested success rates</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="onboard-actions">
+      <button class="btn btn-ghost" id="prevBtn" onclick="prevStep()" style="display:none">← Back</button>
+      <button class="btn btn-primary" id="nextBtn" onclick="nextStep()">Continue →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MAIN APP ===== -->
+<div class="shell" id="mainApp" style="display:none">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="logo-wrap">
+      <div class="logo"><div class="logo-dot"></div>MarketMind</div>
+      <div class="logo-sub">AI Financial Intelligence</div>
+    </div>
+
+    <div class="profile-mini">
+      <div class="avatar" id="sidebarAvatar">R</div>
+      <div class="profile-info">
+        <div class="profile-name" id="sidebarName">Rohan Mehta</div>
+        <div class="profile-tag">● Market open</div>
+      </div>
+    </div>
+
+    <nav>
+      <div class="nav-section">Invest</div>
+      <div class="nav-item active" onclick="showPage('dashboard')">
+        <span class="nav-icon">⬡</span> Dashboard
+      </div>
+      <div class="nav-item" onclick="showPage('radar')">
+        <span class="nav-icon">📡</span> Opportunity Radar
+        <span class="nav-badge">4</span>
+      </div>
+      <div class="nav-item" onclick="showPage('charts')">
+        <span class="nav-icon">◈</span> Chart Patterns
+      </div>
+      <div class="nav-item" onclick="showPage('portfolio')">
+        <span class="nav-icon">◻</span> My Portfolio
+      </div>
+
+      <div class="nav-section">Discover</div>
+      <div class="nav-item" onclick="showPage('news')">
+        <span class="nav-icon">◉</span> News Feed
+        <span class="nav-badge">12</span>
+      </div>
+      <div class="nav-item" onclick="showPage('chat')">
+        <span class="nav-icon">◆</span> Market ChatGPT
+      </div>
+      <div class="nav-item" onclick="showPage('story')">
+        <span class="nav-icon">◎</span> Story Arcs
+      </div>
+
+      <div class="nav-section">Plan</div>
+      <div class="nav-item" onclick="showPage('score')">
+        <span class="nav-icon">◐</span> Money Health
+      </div>
+      <div class="nav-item" onclick="showPage('fire')">
+        <span class="nav-icon">◑</span> FIRE Planner
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="market-status">
+        <div class="status-dot"></div>
+        <span class="text-mono text-xs">NSE • LIVE DATA</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="topbar">
+      <div class="topbar-title" id="topbarTitle">Dashboard</div>
+      <div class="topbar-chips">
+        <div class="chip active" onclick="setTimeframe(this, '1D')">1D</div>
+        <div class="chip" onclick="setTimeframe(this, '1W')">1W</div>
+        <div class="chip" onclick="setTimeframe(this, '1M')">1M</div>
+        <div class="chip" onclick="setTimeframe(this, '1Y')">1Y</div>
+      </div>
+      <div class="index-pill up" id="niftyPill">NIFTY 24,832 ▲1.2%</div>
+      <div class="index-pill dn" id="sensexPill">SENSEX 81,147 ▼0.3%</div>
+    </div>
+
+    <!-- TICKER TAPE -->
+    <div class="ticker-tape">
+      <div class="ticker-inner" id="tickerInner"></div>
+    </div>
+
+    <!-- ===== DASHBOARD ===== -->
+    <div class="page active" id="page-dashboard">
+      <div class="hero">
+        <div>
+          <div class="hero-greeting">Good morning, <span id="heroName">Rohan</span> ✦</div>
+          <div class="hero-title">3 high-confidence<br>signals <span>detected</span> today</div>
+          <div class="hero-sub">Your personalized radar caught an insider buy in HDFC Bank, a bullish breakout forming in Infosys, and a macro shift alert on IT sector. <span style="color:var(--accent)">Act now or set alerts.</span></div>
+        </div>
+        <div class="hero-score">
+          <div class="score-ring">
+            <div class="score-num">74</div>
+            <div class="score-label">HEALTH</div>
+          </div>
+          <div style="font-size:11px; color:var(--muted); text-align:center">Money Health Score<br><span style="color:var(--green); font-family:var(--font-mono)">▲ +3 this week</span></div>
+        </div>
+      </div>
+
+      <!-- METRICS ROW -->
+      <div class="grid-4 mb-20">
+        <div class="metric-tile">
+          <div class="metric-label">Portfolio Value</div>
+          <div class="metric-value">₹4.82L</div>
+          <div class="metric-change up">▲ +₹14,200 today</div>
+        </div>
+        <div class="metric-tile">
+          <div class="metric-label">Unrealised P&L</div>
+          <div class="metric-value" style="color:var(--green)">+₹68,400</div>
+          <div class="metric-change up">▲ +16.5% XIRR</div>
+        </div>
+        <div class="metric-tile">
+          <div class="metric-label">Active Signals</div>
+          <div class="metric-value">7</div>
+          <div class="metric-change neutral">3 high-conf · 4 watching</div>
+        </div>
+        <div class="metric-tile">
+          <div class="metric-label">SIP This Month</div>
+          <div class="metric-value">₹15,000</div>
+          <div class="metric-change up">▲ Auto-invested</div>
+        </div>
+      </div>
+
+      <div class="grid-auto">
+        <!-- LEFT COL -->
+        <div>
+          <!-- TOP SIGNALS -->
+          <div class="section-label">Top Signals Today</div>
+          <div class="signal-item">
+            <div class="signal-icon buy">📈</div>
+            <div class="signal-content">
+              <div class="signal-ticker">HDFCBANK · NSE</div>
+              <div class="signal-text">Insider buy: Director purchases ₹2.3Cr worth of shares</div>
+              <div class="signal-conf"><span class="conf-bar high"></span>High confidence · 3 hrs ago</div>
+            </div>
+            <div><span class="badge badge-green">BUY</span></div>
+          </div>
+          <div class="signal-item">
+            <div class="signal-icon watch">◈</div>
+            <div class="signal-content">
+              <div class="signal-ticker">INFY · NSE</div>
+              <div class="signal-text">Cup & Handle breakout forming on daily chart — ₹1,840 target</div>
+              <div class="signal-conf"><span class="conf-bar high"></span>High confidence · 1 hr ago</div>
+            </div>
+            <div><span class="badge badge-blue">WATCH</span></div>
+          </div>
+          <div class="signal-item">
+            <div class="signal-icon alert">⚡</div>
+            <div class="signal-content">
+              <div class="signal-ticker">NIFTY IT · INDEX</div>
+              <div class="signal-text">FII outflows ₹4,200 Cr from IT sector — macro rotation risk</div>
+              <div class="signal-conf"><span class="conf-bar med"></span>Medium confidence · 2 hrs ago</div>
+            </div>
+            <div><span class="badge badge-orange">ALERT</span></div>
+          </div>
+
+          <!-- PORTFOLIO MINI -->
+          <div class="section-label mt-20">Portfolio Snapshot</div>
+          <div class="card">
+            <div class="chart-placeholder mb-12">
+              <svg class="chart-svg" viewBox="0 0 400 120" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#E8FF47" stop-opacity="0.25"/>
+                    <stop offset="100%" stop-color="#E8FF47" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
+                <path d="M0,90 C20,85 40,70 60,65 C80,60 100,75 120,60 C140,45 160,40 180,35 C200,30 220,45 240,35 C260,25 280,20 300,15 C320,10 340,18 360,12 C380,6 400,8 400,8 L400,120 L0,120 Z" fill="url(#chartGrad)"/>
+                <path d="M0,90 C20,85 40,70 60,65 C80,60 100,75 120,60 C140,45 160,40 180,35 C200,30 220,45 240,35 C260,25 280,20 300,15 C320,10 340,18 360,12 C380,6 400,8 400,8" fill="none" stroke="#E8FF47" stroke-width="2"/>
+              </svg>
+            </div>
+            <div class="table-header">
+              <span>Stock</span><span>LTP</span><span>Day P&L</span><span>Total P&L</span><span>%</span>
+            </div>
+            <div class="holding-row">
+              <div><div class="holding-name">Reliance</div><div class="holding-ticker">RELIANCE</div></div>
+              <div class="holding-num">₹2,812</div>
+              <div class="holding-num up">+₹1,240</div>
+              <div class="holding-num up">+₹18,400</div>
+              <div class="holding-num up">+14.2%</div>
+            </div>
+            <div class="holding-row">
+              <div><div class="holding-name">HDFC Bank</div><div class="holding-ticker">HDFCBANK</div></div>
+              <div class="holding-num">₹1,648</div>
+              <div class="holding-num up">+₹620</div>
+              <div class="holding-num up">+₹9,200</div>
+              <div class="holding-num up">+8.7%</div>
+            </div>
+            <div class="holding-row">
+              <div><div class="holding-name">Infosys</div><div class="holding-ticker">INFY</div></div>
+              <div class="holding-num">₹1,810</div>
+              <div class="holding-num dn">-₹340</div>
+              <div class="holding-num dn">-₹4,200</div>
+              <div class="holding-num dn">-3.1%</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT COL -->
+        <div>
+          <div class="section-label">Live News · AI Curated</div>
+          <div class="card" style="padding: 0 16px;">
+            <div class="news-item">
+              <div class="news-meta">
+                <span class="news-tag bullish">Bullish</span>
+                <span class="news-time">8m ago</span>
+              </div>
+              <div class="news-title">RBI holds rates; signals potential cut in June as inflation eases to 4.2%</div>
+              <div class="news-ai-summary">
+                <div class="news-ai-label">◆ AI INSIGHT</div>
+                Rate-sensitive sectors (banking, NBFC, realty) likely to see short-term buying. Watch HDFCBANK, LICHSGFIN, DLF.
+              </div>
+            </div>
+            <div class="news-item">
+              <div class="news-meta">
+                <span class="news-tag breaking">Breaking</span>
+                <span class="news-time">22m ago</span>
+              </div>
+              <div class="news-title">Tata Motors EV sales up 38% QoQ — market share now at 62% in passenger EVs</div>
+              <div class="news-ai-summary">
+                <div class="news-ai-label">◆ AI INSIGHT</div>
+                Momentum play. Q4 results likely to beat consensus. Analyst upgrades expected from CLSA & Morgan Stanley.
+              </div>
+            </div>
+            <div class="news-item">
+              <div class="news-meta">
+                <span class="news-tag bearish">Bearish</span>
+                <span class="news-time">45m ago</span>
+              </div>
+              <div class="news-title">US Fed signals "higher for longer" — FII selling likely to accelerate in EM markets</div>
+            </div>
+          </div>
+
+          <div class="section-label mt-20">Market Heatmap</div>
+          <div class="card-sm">
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;">
+              <div style="padding: 8px 6px; border-radius: 6px; background: rgba(46,204,138,0.25); text-align: center;">
+                <div style="font-size: 10px; color: var(--muted); font-family: var(--font-mono);">BANK</div>
+                <div style="font-size: 11px; color: var(--green); font-weight: 600; font-family: var(--font-mono);">+1.8%</div>
+              </div>
+              <div style="padding: 8px 6px; border-radius: 6px; background: rgba(46,204,138,0.12); text-align: center;">
+                <div style="font-size: 10px; color: var(--muted); font-family: var(--font-mono);">AUTO</div>
+                <div style="font-size: 11px; color: var(--green); font-family: var(--font-mono);">+0.9%</div>
+              </div>
+              <div style="padding: 8px 6px; border-radius: 6px; background: rgba(255,77,106,0.2); text-align: center;">
+                <div style="font-size: 10px; color: var(--muted); font-family: var(--font-mono);">IT</div>
+                <div style="font-size: 11px; color: var(--red); font-weight: 600; font-family: var(--font-mono);">-1.4%</div>
+              </div>
+              <div style="padding: 8px 6px; border-radius: 6px; background: rgba(46,204,138,0.08); text-align: center;">
+                <div style="font-size: 10px; color: var(--muted); font-family: var(--font-mono);">FMCG</div>
+                <div style="font-size: 11px; color: var(--green); font-family: var(--font-mono);">+0.4%</div>
+              </div>
+              <div style="padding: 8px 6px; border-radius: 6px; background: rgba(255,77,106,0.1); text-align: center;">
+                <div style="font-size: 10px; color: var(--muted); font-family: var(--font-mono);">METAL</div>
+                <div style="font-size: 11px; color: var(--red); font-family: var(--font-mono);">-0.6%</div>
+              </div>
+              <div style="padding: 8px 6px; border-radius: 6px; background: rgba(46,204,138,0.35); text-align: center;">
+                <div style="font-size: 10px; color: var(--muted); font-family: var(--font-mono);">INFRA</div>
+                <div style="font-size: 11px; color: var(--green); font-weight: 600; font-family: var(--font-mono);">+2.3%</div>
+              </div>
+              <div style="padding: 8px 6px; border-radius: 6px; background: rgba(77,156,255,0.12); text-align: center;">
+                <div style="font-size: 10px; color: var(--muted); font-family: var(--font-mono);">PHARMA</div>
+                <div style="font-size: 11px; color: var(--blue); font-family: var(--font-mono);">+0.1%</div>
+              </div>
+              <div style="padding: 8px 6px; border-radius: 6px; background: rgba(46,204,138,0.18); text-align: center;">
+                <div style="font-size: 10px; color: var(--muted); font-family: var(--font-mono);">DEF</div>
+                <div style="font-size: 11px; color: var(--green); font-family: var(--font-mono);">+1.1%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== RADAR PAGE ===== -->
+    <div class="page" id="page-radar">
+      <div class="section-label">Opportunity Radar — Live Signals</div>
+      <div class="grid-4 mb-20">
+        <div class="metric-tile"><div class="metric-label">New Signals Today</div><div class="metric-value">12</div><div class="metric-change up">▲ 4 high-confidence</div></div>
+        <div class="metric-tile"><div class="metric-label">Insider Buys</div><div class="metric-value">3</div><div class="metric-change neutral">Bulk deal + 2 block</div></div>
+        <div class="metric-tile"><div class="metric-label">Breakout Setups</div><div class="metric-value">7</div><div class="metric-change up">▲ 52W highs</div></div>
+        <div class="metric-tile"><div class="metric-label">Regulatory Alerts</div><div class="metric-value">2</div><div class="metric-change dn">SEBI filings</div></div>
+      </div>
+
+      <div class="tabs">
+        <div class="tab active" onclick="switchTab(this, 'radarTab')">All Signals</div>
+        <div class="tab" onclick="switchTab(this, 'radarTab')">Insider Activity</div>
+        <div class="tab" onclick="switchTab(this, 'radarTab')">Bulk Deals</div>
+        <div class="tab" onclick="switchTab(this, 'radarTab')">Corp. Filings</div>
+        <div class="tab" onclick="switchTab(this, 'radarTab')">52W Highs</div>
+      </div>
+
+      <div class="grid-2">
+        <div>
+          <div class="signal-item">
+            <div class="signal-icon buy">📈</div>
+            <div class="signal-content">
+              <div class="signal-ticker">HDFCBANK · Insider Buy</div>
+              <div class="signal-text">Director Sashidhar Jagdishan acquires 1.4L shares at ₹1,642 avg</div>
+              <div class="signal-conf"><span class="conf-bar high"></span>High confidence · Pattern match: 91%</div>
+            </div>
+            <span class="badge badge-green">BUY</span>
+          </div>
+          <div class="signal-item">
+            <div class="signal-icon buy">🏗️</div>
+            <div class="signal-content">
+              <div class="signal-ticker">L&T · Bulk Deal</div>
+              <div class="signal-text">LIC acquires 2.2% stake — ₹8,400 Cr block deal at NSE</div>
+              <div class="signal-conf"><span class="conf-bar high"></span>High confidence · Historical hit rate: 78%</div>
+            </div>
+            <span class="badge badge-green">BUY</span>
+          </div>
+          <div class="signal-item">
+            <div class="signal-icon alert">📋</div>
+            <div class="signal-content">
+              <div class="signal-ticker">ZOMATO · SEBI Filing</div>
+              <div class="signal-text">Buyback announcement: ₹1,200 Cr at ₹220 per share ceiling</div>
+              <div class="signal-conf"><span class="conf-bar med"></span>Medium confidence · Monitor closely</div>
+            </div>
+            <span class="badge badge-blue">WATCH</span>
+          </div>
+          <div class="signal-item">
+            <div class="signal-icon sell">📉</div>
+            <div class="signal-content">
+              <div class="signal-ticker">WIPRO · Promoter Sell</div>
+              <div class="signal-text">Promoter offloads 0.8% stake — 3rd consecutive quarter of reduction</div>
+              <div class="signal-conf"><span class="conf-bar med"></span>Bearish signal · Needs confirmation</div>
+            </div>
+            <span class="badge badge-red">SELL</span>
+          </div>
+        </div>
+
+        <div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Signal Stream (Live)</div>
+              <div class="card-action">See all</div>
+            </div>
+            <div class="scroll-list">
+              <div class="notif">
+                <div class="notif-dot" style="background: var(--green)"></div>
+                <div class="notif-content">
+                  <div class="notif-title">TATAMOTORS hitting 52W high</div>
+                  <div class="notif-body">Breakout above ₹980 on 3x avg volume. RSI at 68.</div>
+                  <div class="notif-time">2 min ago</div>
+                </div>
+              </div>
+              <div class="notif">
+                <div class="notif-dot" style="background: var(--blue)"></div>
+                <div class="notif-content">
+                  <div class="notif-title">Q4 result beat: BAJFINANCE</div>
+                  <div class="notif-body">Net profit ₹4,248 Cr vs ₹3,890 Cr est. +12% beat.</div>
+                  <div class="notif-time">14 min ago</div>
+                </div>
+              </div>
+              <div class="notif">
+                <div class="notif-dot" style="background: var(--orange)"></div>
+                <div class="notif-content">
+                  <div class="notif-title">Management commentary shift: INFY</div>
+                  <div class="notif-body">CEO tone turned cautious on FY26 deal pipeline. Watch for guidance cut.</div>
+                  <div class="notif-time">38 min ago</div>
+                </div>
+              </div>
+              <div class="notif">
+                <div class="notif-dot" style="background: var(--red)"></div>
+                <div class="notif-content">
+                  <div class="notif-title">Regulatory alert: ADANIPOWER</div>
+                  <div class="notif-body">SEBI sends notice on related-party transaction disclosures.</div>
+                  <div class="notif-time">1 hr ago</div>
+                </div>
+              </div>
+              <div class="notif">
+                <div class="notif-dot" style="background: var(--green)"></div>
+                <div class="notif-content">
+                  <div class="notif-title">Block deal: SBI at premium</div>
+                  <div class="notif-body">GIC Singapore buys 1.1% stake at 3% premium to mkt price.</div>
+                  <div class="notif-time">2 hrs ago</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== CHART PATTERNS ===== -->
+    <div class="page" id="page-charts">
+      <div class="section-label">Chart Pattern Intelligence — NSE Universe</div>
+      <div class="grid-4 mb-20">
+        <div class="metric-tile"><div class="metric-label">Patterns Detected</div><div class="metric-value">43</div><div class="metric-change up">▲ Across 1,200+ stocks</div></div>
+        <div class="metric-tile"><div class="metric-label">Bullish Setups</div><div class="metric-value">31</div><div class="metric-change up">▲ Breakout imminent</div></div>
+        <div class="metric-tile"><div class="metric-label">Avg Backtest Win Rate</div><div class="metric-value">67%</div><div class="metric-change neutral">30-day window</div></div>
+        <div class="metric-tile"><div class="metric-label">Avg Return (pattern)</div><div class="metric-value">+11.4%</div><div class="metric-change up">▲ Historical avg</div></div>
+      </div>
+
+      <div class="grid-2">
+        <div>
+          <div class="pattern-card">
+            <div class="pattern-header">
+              <div style="font-size: 20px;">◈</div>
+              <div class="pattern-name">Cup & Handle — INFY</div>
+              <span class="badge badge-green">High</span>
+              <div class="pattern-conf" style="color: var(--green)">Conf: 89%</div>
+            </div>
+            <div class="chart-placeholder mb-12" style="height: 100px;">
+              <svg class="chart-svg" viewBox="0 0 300 80" preserveAspectRatio="none">
+                <path d="M0,20 C30,20 60,60 90,65 C120,70 150,60 180,20 C200,8 210,12 220,15 C230,18 250,25 250,25 L250,80 L0,80 Z" fill="rgba(77,156,255,0.1)"/>
+                <path d="M0,20 C30,20 60,60 90,65 C120,70 150,60 180,20 C200,8 210,12 220,15 C230,18 250,25 250,25" fill="none" stroke="var(--blue)" stroke-width="2"/>
+                <line x1="0" y1="20" x2="300" y2="20" stroke="var(--accent)" stroke-width="1" stroke-dasharray="4,4"/>
+              </svg>
+            </div>
+            <div class="pattern-detail">Breakout target: <strong style="color:var(--accent)">₹1,840</strong> · Stop loss: ₹1,728 · Historical win rate on INFY for this pattern: <strong style="color:var(--green)">73%</strong> over 12 instances in 5Y</div>
+          </div>
+
+          <div class="pattern-card">
+            <div class="pattern-header">
+              <div style="font-size: 20px;">◻</div>
+              <div class="pattern-name">Bull Flag — TATAMOTORS</div>
+              <span class="badge badge-green">High</span>
+              <div class="pattern-conf" style="color: var(--green)">Conf: 82%</div>
+            </div>
+            <div class="pattern-detail">Strong uptrend, consolidation channel forming. Breakout target: <strong style="color:var(--accent)">₹1,040</strong> · Stop: ₹935 · Historical win rate: <strong style="color:var(--green)">68%</strong> over 8 instances</div>
+          </div>
+
+          <div class="pattern-card">
+            <div class="pattern-header">
+              <div style="font-size: 20px;">▽</div>
+              <div class="pattern-name">Head & Shoulders — WIPRO</div>
+              <span class="badge badge-red">Bearish</span>
+              <div class="pattern-conf" style="color: var(--red)">Conf: 76%</div>
+            </div>
+            <div class="pattern-detail">Neckline at ₹448. Breakdown target: <strong style="color:var(--red)">₹412</strong> · Stop: ₹465 · Historical win rate on WIPRO: <strong style="color:var(--orange)">61%</strong> — proceed with caution</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Pattern Screener</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Pattern type</label>
+            <select class="form-select">
+              <option>All patterns</option>
+              <option>Cup & Handle</option>
+              <option>Bull Flag</option>
+              <option>Breakout</option>
+              <option>Head & Shoulders</option>
+              <option>Double Bottom</option>
+              <option>Ascending Triangle</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Confidence threshold</label>
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <input type="range" min="50" max="95" value="70" id="confSlider" oninput="document.getElementById('confVal').textContent = this.value + '%'">
+              <span id="confVal" class="text-mono" style="font-size: 13px; color: var(--accent); width: 36px;">70%</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Sector filter</label>
+            <select class="form-select">
+              <option>All sectors</option>
+              <option>Banking</option>
+              <option>IT</option>
+              <option>Auto</option>
+              <option>FMCG</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Timeframe</label>
+            <div class="tag-select" id="tfSelect">
+              <div class="tag-option selected" onclick="toggleTag(this,'tfSelect')">Daily</div>
+              <div class="tag-option" onclick="toggleTag(this,'tfSelect')">Weekly</div>
+              <div class="tag-option" onclick="toggleTag(this,'tfSelect')">15 min</div>
+            </div>
+          </div>
+          <button class="btn btn-primary" style="width:100%">Run Screener →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== NEWS PAGE ===== -->
+    <div class="page" id="page-news">
+      <div class="section-label">AI News Feed — Personalized for You</div>
+      <div class="grid-auto">
+        <div>
+          <div class="ai-input-bar">
+            <div class="ai-icon">◆</div>
+            <input class="ai-input" placeholder="Ask about any story, stock, or market trend...">
+            <button class="btn btn-primary" style="padding: 8px 16px; font-size: 12px;">Ask</button>
+          </div>
+
+          <div class="quick-asks">
+            <div class="quick-ask">What's moving Nifty today?</div>
+            <div class="quick-ask">Summarize RBI policy impact</div>
+            <div class="quick-ask">IT sector news this week</div>
+            <div class="quick-ask">IPO updates</div>
+          </div>
+
+          <div class="tabs">
+            <div class="tab active" onclick="switchTab(this, 'newsTab')">For You</div>
+            <div class="tab" onclick="switchTab(this, 'newsTab')">Markets</div>
+            <div class="tab" onclick="switchTab(this, 'newsTab')">My Stocks</div>
+            <div class="tab" onclick="switchTab(this, 'newsTab')">IPO</div>
+            <div class="tab" onclick="switchTab(this, 'newsTab')">Global</div>
+          </div>
+
+          <div class="news-item">
+            <div class="news-meta">
+              <span class="news-tag bullish">Bullish</span>
+              <span class="news-tag" style="background: rgba(167,139,250,0.12); color: var(--purple);">Your stock</span>
+              <span class="news-time">8 min ago · ET Markets</span>
+            </div>
+            <div class="news-title">RBI holds repo rate at 6.5% for 7th straight meeting; CPI at 4.2% opens door for June cut</div>
+            <div class="news-ai-summary">
+              <div class="news-ai-label">◆ AI INSIGHT · Relevant to your portfolio</div>
+              Rate-sensitive sectors rally expected. Your holdings HDFCBANK (+1.8%), LICHSGFIN (+2.4%) likely to benefit. Banking index could touch 55,200.
+            </div>
+          </div>
+
+          <div class="news-item">
+            <div class="news-meta">
+              <span class="news-tag breaking">Breaking</span>
+              <span class="news-time">22 min ago · ET Auto</span>
+            </div>
+            <div class="news-title">Tata Motors EV sales surge 38% QoQ; Nexon EV regains top spot — Q4 results to beat estimates</div>
+            <div class="news-ai-summary">
+              <div class="news-ai-label">◆ AI INSIGHT</div>
+              Strong EV momentum + expected analyst upgrades. TATAMOTORS could break ₹1,000 resistance. Not in your portfolio — add to watchlist?
+            </div>
+          </div>
+
+          <div class="news-item">
+            <div class="news-meta">
+              <span class="news-tag bearish">Bearish</span>
+              <span class="news-time">45 min ago · ET Markets</span>
+            </div>
+            <div class="news-title">US Fed signals rates stay high; FII net sellers for 4th day — ₹6,200 Cr outflows from equities</div>
+            <div class="news-ai-summary">
+              <div class="news-ai-label">◆ AI INSIGHT</div>
+              Macro headwind. IT & midcap most exposed. Your INFY position (-3.1%) at risk if selling accelerates. Consider stop-loss at ₹1,750.
+            </div>
+          </div>
+
+          <div class="news-item">
+            <div class="news-meta">
+              <span class="news-tag neutral">Neutral</span>
+              <span class="news-time">1 hr ago · ET Wealth</span>
+            </div>
+            <div class="news-title">SEBI proposes new framework for F&O position limits — retail traders to get higher exposure</div>
+          </div>
+
+          <div class="news-item">
+            <div class="news-meta">
+              <span class="news-tag bullish">Bullish</span>
+              <span class="news-time">2 hrs ago · ET Now</span>
+            </div>
+            <div class="news-title">India's forex reserves hit all-time high of $698 billion — rupee stabilizes at 83.2/USD</div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card mb-16">
+            <div class="card-title mb-12">Story Arc Tracker</div>
+            <div style="font-size: 12px; color: var(--muted); margin-bottom: 14px;">Follow an ongoing story — AI builds the full narrative arc</div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <div style="padding: 10px; border-radius: 8px; background: var(--bg3); border: 1px solid var(--border); cursor: pointer; font-size: 13px;">📌 RBI Rate Cut Cycle 2025</div>
+              <div style="padding: 10px; border-radius: 8px; background: var(--bg3); border: 1px solid var(--border); cursor: pointer; font-size: 13px;">📌 Adani Group — Full Saga</div>
+              <div style="padding: 10px; border-radius: 8px; background: var(--bg3); border: 1px solid var(--border); cursor: pointer; font-size: 13px;">📌 India EV Race 2026</div>
+              <div style="padding: 10px; border-radius: 8px; background: rgba(232,255,71,0.05); border: 1px solid rgba(232,255,71,0.2); cursor: pointer; font-size: 13px; color: var(--accent);">+ Track new story</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title mb-12">Sentiment Tracker</div>
+            <div style="font-size: 12px; color: var(--muted); margin-bottom: 12px;">Market mood by sector today</div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <div><div class="flex-between mb-12" style="margin-bottom: 4px;"><span style="font-size: 12px;">Banking</span><span class="text-mono text-xs" style="color: var(--green);">Very Bullish</span></div>
+              <div class="dim-bar-wrap"><div class="dim-bar" style="width: 85%; background: var(--green)"></div></div></div>
+              <div><div class="flex-between mb-12" style="margin-bottom: 4px;"><span style="font-size: 12px;">Auto</span><span class="text-mono text-xs" style="color: var(--green);">Bullish</span></div>
+              <div class="dim-bar-wrap"><div class="dim-bar" style="width: 68%; background: var(--green)"></div></div></div>
+              <div><div class="flex-between mb-12" style="margin-bottom: 4px;"><span style="font-size: 12px;">IT</span><span class="text-mono text-xs" style="color: var(--red);">Bearish</span></div>
+              <div class="dim-bar-wrap"><div class="dim-bar" style="width: 30%; background: var(--red)"></div></div></div>
+              <div><div class="flex-between mb-12" style="margin-bottom: 4px;"><span style="font-size: 12px;">FMCG</span><span class="text-mono text-xs" style="color: var(--muted);">Neutral</span></div>
+              <div class="dim-bar-wrap"><div class="dim-bar" style="width: 50%; background: var(--muted)"></div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== CHAT PAGE ===== -->
+    <div class="page" id="page-chat">
+      <div class="section-label">Market ChatGPT — Portfolio-Aware AI</div>
+      <div style="max-width: 760px;">
+        <div class="quick-asks mb-16">
+          <div class="quick-ask">Analyze my portfolio risk</div>
+          <div class="quick-ask">Best SIP strategy for ₹15K/month</div>
+          <div class="quick-ask">Is HDFC Bank a buy now?</div>
+          <div class="quick-ask">Explain Q4 results impact on IT</div>
+          <div class="quick-ask">Old vs new tax regime for me</div>
+        </div>
+
+        <div class="chat-wrap" id="chatWrap">
+          <div class="chat-bubble chat-ai">
+            <div class="chat-ai-label">◆ MARKETMIND AI · PORTFOLIO AWARE</div>
+            Namaste! I'm your personal market intelligence layer. I know your portfolio (RELIANCE, HDFCBANK, INFY), your risk profile (Moderate), and your goals (Wealth building + Retirement). Ask me anything — I'll give you context-aware answers, not generic advice.
+          </div>
+          <div class="chat-bubble chat-user">Should I hold or sell my INFY position given the IT sector outlook?</div>
+          <div class="chat-bubble chat-ai">
+            <div class="chat-ai-label">◆ MARKETMIND AI · ANALYZING YOUR POSITION</div>
+            <strong style="color: var(--text); display: block; margin-bottom: 6px;">Hold with a tight stop — here's why:</strong>
+            <strong style="color: var(--muted); font-size: 12px; font-weight: 400; display: block; margin-bottom: 8px;">Your INFY position: ₹1,810 avg buy · Currently at -3.1%</strong>
+            <p style="margin-bottom: 8px;">• <strong>Near-term headwind:</strong> FII selling + US Fed hawkishness = IT sector pressure for 2–4 weeks</p>
+            <p style="margin-bottom: 8px;">• <strong>But:</strong> Cup & Handle pattern on daily chart has 89% confidence — breakout target ₹1,840 (vs your buy of ₹1,870)</p>
+            <p style="margin-bottom: 8px;">• <strong>Key trigger:</strong> Q4 results on May 12. Consensus expects 6% QoQ revenue growth. A beat = recovery.</p>
+            <p style="color: var(--accent); font-size: 12px; margin-top: 10px;">📌 Recommendation: Hold. Set stop-loss at ₹1,750 (6% below current). Review after Q4 results.</p>
+          </div>
+        </div>
+
+        <div class="ai-input-bar" style="position: sticky; bottom: 20px;">
+          <div class="ai-icon">◆</div>
+          <input class="ai-input" id="chatInput" placeholder="Ask about markets, your portfolio, tax, SIP plans..." onkeydown="if(event.key==='Enter') sendChat()">
+          <button class="btn btn-primary" onclick="sendChat()" style="padding: 8px 16px; font-size: 12px;">Send →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PORTFOLIO PAGE ===== -->
+    <div class="page" id="page-portfolio">
+      <div class="section-label">My Portfolio — Full View</div>
+      <div class="grid-4 mb-20">
+        <div class="metric-tile"><div class="metric-label">Total Value</div><div class="metric-value">₹4,82,400</div><div class="metric-change up">▲ Invested: ₹4,14,000</div></div>
+        <div class="metric-tile"><div class="metric-label">Unrealised P&L</div><div class="metric-value" style="color:var(--green)">+₹68,400</div><div class="metric-change up">▲ +16.52%</div></div>
+        <div class="metric-tile"><div class="metric-label">XIRR</div><div class="metric-value">18.4%</div><div class="metric-change up">▲ Above index</div></div>
+        <div class="metric-tile"><div class="metric-label">Today's P&L</div><div class="metric-value" style="color:var(--green)">+₹14,200</div><div class="metric-change up">▲ +2.9%</div></div>
+      </div>
+
+      <div class="grid-auto">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Holdings</div>
+            <button class="btn btn-ghost" style="padding: 6px 14px; font-size: 12px;">+ Add holding</button>
+          </div>
+          <div class="table-header">
+            <span>Stock</span><span>LTP</span><span>Day P&L</span><span>Total P&L</span><span>%</span>
+          </div>
+          <div class="holding-row">
+            <div><div class="holding-name">Reliance Industries</div><div class="holding-ticker">RELIANCE · 65 shares</div></div>
+            <div class="holding-num">₹2,812</div>
+            <div class="holding-num up">+₹1,240</div>
+            <div class="holding-num up">+₹18,400</div>
+            <div class="holding-num up">+14.2%</div>
+          </div>
+          <div class="holding-row">
+            <div><div class="holding-name">HDFC Bank</div><div class="holding-ticker">HDFCBANK · 120 shares</div></div>
+            <div class="holding-num">₹1,648</div>
+            <div class="holding-num up">+₹620</div>
+            <div class="holding-num up">+₹29,200</div>
+            <div class="holding-num up">+18.7%</div>
+          </div>
+          <div class="holding-row">
+            <div><div class="holding-name">Infosys</div><div class="holding-ticker">INFY · 84 shares</div></div>
+            <div class="holding-num">₹1,810</div>
+            <div class="holding-num dn">-₹340</div>
+            <div class="holding-num dn">-₹5,040</div>
+            <div class="holding-num dn">-3.2%</div>
+          </div>
+          <div class="holding-row">
+            <div><div class="holding-name">Mirae Asset ELSS Fund</div><div class="holding-ticker">MF · SIP ₹5,000/mo</div></div>
+            <div class="holding-num">₹48.2</div>
+            <div class="holding-num up">+₹180</div>
+            <div class="holding-num up">+₹22,400</div>
+            <div class="holding-num up">+24.8%</div>
+          </div>
+          <div class="holding-row">
+            <div><div class="holding-name">Tata Digital India Fund</div><div class="holding-ticker">MF · SIP ₹3,000/mo</div></div>
+            <div class="holding-num">₹31.6</div>
+            <div class="holding-num dn">-₹90</div>
+            <div class="holding-num dn">-₹3,560</div>
+            <div class="holding-num dn">-8.4%</div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="card-header">
+            <div class="card-title">AI Portfolio X-Ray</div>
+            <div class="card-action">Full analysis</div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div class="signal-item" style="margin: 0;">
+              <div class="signal-icon alert">⚠️</div>
+              <div class="signal-content">
+                <div class="signal-text">Portfolio overlap detected</div>
+                <div class="signal-conf">RELIANCE and HDFC make up 68% — over-concentrated. Diversify into mid/smallcap.</div>
+              </div>
+            </div>
+            <div class="signal-item" style="margin: 0;">
+              <div class="signal-icon buy">✓</div>
+              <div class="signal-content">
+                <div class="signal-text">Good: XIRR above Nifty 50 benchmark</div>
+                <div class="signal-conf">Your 18.4% XIRR beats Nifty 1Y return of 14.2%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card mb-16">
+            <div class="card-title mb-12">Allocation</div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <div><div class="flex-between" style="margin-bottom: 4px;"><span style="font-size: 12px;">Equities</span><span class="text-mono text-xs">62%</span></div>
+              <div class="dim-bar-wrap"><div class="dim-bar" style="width: 62%; background: var(--blue)"></div></div></div>
+              <div><div class="flex-between" style="margin-bottom: 4px;"><span style="font-size: 12px;">Mutual Funds</span><span class="text-mono text-xs">28%</span></div>
+              <div class="dim-bar-wrap"><div class="dim-bar" style="width: 28%; background: var(--purple)"></div></div></div>
+              <div><div class="flex-between" style="margin-bottom: 4px;"><span style="font-size: 12px;">Cash</span><span class="text-mono text-xs">10%</span></div>
+              <div class="dim-bar-wrap"><div class="dim-bar" style="width: 10%; background: var(--muted)"></div></div></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title mb-12">SIP Tracker</div>
+            <div style="display: flex; flex-direction: column; gap: 10px; font-size: 13px;">
+              <div class="flex-between"><span>Mirae ELSS</span><span class="text-mono" style="color:var(--green)">₹5,000 · Active</span></div>
+              <div class="flex-between"><span>Tata Digital India</span><span class="text-mono" style="color:var(--green)">₹3,000 · Active</span></div>
+              <div class="flex-between"><span>Next SIP date</span><span class="text-mono" style="color:var(--accent)">Apr 1, 2026</span></div>
+              <div class="flex-between"><span>Total SIP/month</span><span class="text-mono">₹8,000</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== MONEY HEALTH PAGE ===== -->
+    <div class="page" id="page-score">
+      <div class="section-label">Money Health Score</div>
+      <div class="grid-auto">
+        <div class="card">
+          <div style="text-align: center; padding: 20px 0 28px;">
+            <div style="font-size: 72px; font-family: var(--font-display); font-weight: 800; color: var(--accent); line-height: 1;">74</div>
+            <div style="font-size: 14px; color: var(--muted); margin-top: 6px;">out of 100 · <span style="color: var(--green)">Good</span></div>
+            <div style="font-size: 12px; color: var(--muted2); margin-top: 4px; font-family: var(--font-mono);">Top 32% of users in your income bracket</div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="score-dim">
+            <div class="dim-name">Emergency Fund</div>
+            <div class="dim-bar-wrap"><div class="dim-bar" style="width: 85%; background: var(--green)"></div></div>
+            <div class="dim-val" style="color:var(--green)">85</div>
+          </div>
+          <div class="score-dim">
+            <div class="dim-name">Insurance Cover</div>
+            <div class="dim-bar-wrap"><div class="dim-bar" style="width: 60%; background: var(--orange)"></div></div>
+            <div class="dim-val" style="color:var(--orange)">60</div>
+          </div>
+          <div class="score-dim">
+            <div class="dim-name">Investment Diversity</div>
+            <div class="dim-bar-wrap"><div class="dim-bar" style="width: 55%; background: var(--orange)"></div></div>
+            <div class="dim-val" style="color:var(--orange)">55</div>
+          </div>
+          <div class="score-dim">
+            <div class="dim-name">Debt Health</div>
+            <div class="dim-bar-wrap"><div class="dim-bar" style="width: 90%; background: var(--green)"></div></div>
+            <div class="dim-val" style="color:var(--green)">90</div>
+          </div>
+          <div class="score-dim">
+            <div class="dim-name">Tax Efficiency</div>
+            <div class="dim-bar-wrap"><div class="dim-bar" style="width: 70%; background: var(--blue)"></div></div>
+            <div class="dim-val" style="color:var(--blue)">70</div>
+          </div>
+          <div class="score-dim">
+            <div class="dim-name">Retirement Readiness</div>
+            <div class="dim-bar-wrap"><div class="dim-bar" style="width: 45%; background: var(--red)"></div></div>
+            <div class="dim-val" style="color:var(--red)">45</div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card mb-16">
+            <div class="card-title mb-12">AI Recommendations</div>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <div class="signal-item" style="margin: 0;">
+                <div class="signal-icon sell">❗</div>
+                <div class="signal-content">
+                  <div class="signal-text">Low retirement score (45/100)</div>
+                  <div class="signal-conf">Start NPS Tier 1: ₹50,000/yr saves ₹15,000 tax + builds pension corpus. At 30, you need ₹2.8Cr by 60.</div>
+                </div>
+              </div>
+              <div class="signal-item" style="margin: 0;">
+                <div class="signal-icon alert">💡</div>
+                <div class="signal-content">
+                  <div class="signal-text">Term insurance gap</div>
+                  <div class="signal-conf">Your current cover: ₹0. Recommended: ₹1.5Cr. At 30, premium is ~₹900/mo. Act before next birthday.</div>
+                </div>
+              </div>
+              <div class="signal-item" style="margin: 0;">
+                <div class="signal-icon buy">✓</div>
+                <div class="signal-content">
+                  <div class="signal-text">Strong debt management</div>
+                  <div class="signal-conf">Zero credit card debt, loan-to-income at 18%. Excellent foundation for wealth building.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title mb-12">Tax Wizard — Quick Estimate</div>
+            <div class="form-group">
+              <label class="form-label">Annual salary (₹)</label>
+              <input class="form-input" type="number" placeholder="e.g. 1200000" id="taxSalary">
+            </div>
+            <button class="btn btn-primary" style="width:100%; margin-bottom: 12px;" onclick="calcTax()">Compare tax regimes →</button>
+            <div id="taxResult" style="display:none; padding: 12px; background: var(--bg3); border-radius: 8px; font-size: 13px; color: var(--muted); line-height: 1.6;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== FIRE PLANNER PAGE ===== -->
+    <div class="page" id="page-fire">
+      <div class="section-label">FIRE Path Planner — Financial Independence</div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title mb-16">Your FIRE Calculator</div>
+          <div class="form-group">
+            <label class="form-label">Current age</label>
+            <input class="form-input" type="number" id="fireAge" value="30" oninput="calcFire()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Target retirement age</label>
+            <input class="form-input" type="number" id="fireRetire" value="50" oninput="calcFire()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Monthly expenses (₹)</label>
+            <input class="form-input" type="number" id="fireExpense" value="60000" oninput="calcFire()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Monthly SIP capacity (₹)</label>
+            <input class="form-input" type="number" id="fireSip" value="25000" oninput="calcFire()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Expected return rate: <span id="fireRateVal" style="color:var(--accent)">12%</span></label>
+            <input type="range" min="8" max="18" value="12" id="fireRate" oninput="document.getElementById('fireRateVal').textContent=this.value+'%'; calcFire()">
+          </div>
+        </div>
+
+        <div>
+          <div class="card mb-16" id="fireResult">
+            <div style="font-size: 12px; color: var(--muted); margin-bottom: 20px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.06em;">FIRE Projection</div>
+            <div class="grid-2" style="gap: 12px; margin-bottom: 16px;">
+              <div class="metric-tile">
+                <div class="metric-label">FIRE Corpus Needed</div>
+                <div class="metric-value" id="fireCorpus" style="font-size: 20px;">₹2.16Cr</div>
+              </div>
+              <div class="metric-tile">
+                <div class="metric-label">Projected Corpus</div>
+                <div class="metric-value" id="fireProjected" style="font-size: 20px; color: var(--green);">₹3.44Cr</div>
+              </div>
+            </div>
+            <div class="signal-item" style="margin: 0;">
+              <div class="signal-icon buy">🎯</div>
+              <div class="signal-content">
+                <div class="signal-text" id="fireStatus">You're on track for FIRE at 50!</div>
+                <div class="signal-conf" id="fireDetail">With ₹25,000/mo SIP at 12% returns, you'll accumulate ₹3.44Cr — 59% above your FIRE goal.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title mb-12">Month-by-Month Milestones</div>
+            <div style="display: flex; flex-direction: column; gap: 8px; font-size: 13px;">
+              <div class="flex-between" style="padding: 8px 0; border-bottom: 1px solid var(--border);">
+                <span style="color: var(--muted)">Year 3 (Age 33)</span>
+                <span style="color: var(--text); font-family: var(--font-mono)">₹12.8L accumulated</span>
+              </div>
+              <div class="flex-between" style="padding: 8px 0; border-bottom: 1px solid var(--border);">
+                <span style="color: var(--muted)">Year 5 (Age 35)</span>
+                <span style="color: var(--text); font-family: var(--font-mono)">₹24.4L — 1st milestone</span>
+              </div>
+              <div class="flex-between" style="padding: 8px 0; border-bottom: 1px solid var(--border);">
+                <span style="color: var(--muted)">Year 10 (Age 40)</span>
+                <span style="color: var(--green); font-family: var(--font-mono)">₹64.8L — Half FIRE</span>
+              </div>
+              <div class="flex-between" style="padding: 8px 0;">
+                <span style="color: var(--muted)">Year 20 (Age 50)</span>
+                <span style="color: var(--accent); font-family: var(--font-mono); font-weight: 600;">₹3.44Cr — FIRE! 🎯</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== STORY ARC PAGE ===== -->
+    <div class="page" id="page-story">
+      <div class="section-label">Story Arc Tracker — Follow Any Ongoing Story</div>
+      <div class="card mb-20">
+        <div style="display: flex; gap: 12px; align-items: center;">
+          <input class="form-input" style="flex:1" placeholder="Enter a company, theme, or event — e.g. 'Paytm RBI crisis', 'India EV policy', 'Adani Group'">
+          <button class="btn btn-primary">Track Story →</button>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div>
+          <div class="card">
+            <div class="flex-between mb-16">
+              <div class="card-title">RBI Rate Cut Cycle 2025–26</div>
+              <span class="badge badge-blue">Ongoing</span>
+            </div>
+
+            <div style="position: relative; padding-left: 20px;">
+              <div style="position: absolute; left: 6px; top: 0; bottom: 0; width: 1px; background: var(--border);"></div>
+
+              <div style="position: relative; margin-bottom: 18px;">
+                <div style="position: absolute; left: -17px; top: 4px; width: 8px; height: 8px; border-radius: 50%; background: var(--green); border: 2px solid var(--bg2);"></div>
+                <div style="font-size: 10px; color: var(--muted2); font-family: var(--font-mono); margin-bottom: 3px;">MAR 28, 2026 · Today</div>
+                <div style="font-size: 13px; font-weight: 500;">RBI holds at 6.5% — 7th consecutive pause</div>
+                <div style="font-size: 12px; color: var(--muted); margin-top: 3px;">Inflation at 4.2%, below 4.5% target. June cut probability at 68%.</div>
+              </div>
+
+              <div style="position: relative; margin-bottom: 18px;">
+                <div style="position: absolute; left: -17px; top: 4px; width: 8px; height: 8px; border-radius: 50%; background: var(--blue); border: 2px solid var(--bg2);"></div>
+                <div style="font-size: 10px; color: var(--muted2); font-family: var(--font-mono); margin-bottom: 3px;">FEB 6, 2026</div>
+                <div style="font-size: 13px; font-weight: 500;">Unexpected 25bps cut — first in 5 years</div>
+                <div style="font-size: 12px; color: var(--muted); margin-top: 3px;">Markets rally 2.3%. Nifty Bank hits ATH. Sensex crosses 80,000.</div>
+              </div>
+
+              <div style="position: relative; margin-bottom: 18px;">
+                <div style="position: absolute; left: -17px; top: 4px; width: 8px; height: 8px; border-radius: 50%; background: var(--muted2); border: 2px solid var(--bg2);"></div>
+                <div style="font-size: 10px; color: var(--muted2); font-family: var(--font-mono); margin-bottom: 3px;">OCT 2025</div>
+                <div style="font-size: 13px; font-weight: 500;">Rate pause extended — food inflation sticky</div>
+              </div>
+            </div>
+
+            <div style="padding: 12px; background: rgba(232,255,71,0.05); border-radius: 8px; border: 1px solid rgba(232,255,71,0.15); margin-top: 8px;">
+              <div style="font-size: 10px; color: var(--accent); font-family: var(--font-mono); margin-bottom: 4px;">◆ AI PREDICTION</div>
+              <div style="font-size: 12px; color: var(--muted); line-height: 1.6;">June 2026 cut likely at 25bps if CPI stays below 4.5%. Watch for monsoon data in May. Stocks to benefit: HDFCBANK, BAJFINANCE, DLF.</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card mb-16">
+            <div class="card-title mb-12">Key Players</div>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <div class="flex-center gap-12">
+                <div class="avatar" style="background: linear-gradient(135deg, #1A6EE8, #22D3EE); font-size: 11px;">SM</div>
+                <div><div style="font-size: 13px; font-weight: 500;">Sanjay Malhotra</div><div style="font-size: 11px; color: var(--muted);">RBI Governor · Key decision maker</div></div>
+              </div>
+              <div class="flex-center gap-12">
+                <div class="avatar" style="background: linear-gradient(135deg, #3B6D11, #63A322); font-size: 11px;">NI</div>
+                <div><div style="font-size: 13px; font-weight: 500;">Nirmala Sitharaman</div><div style="font-size: 11px; color: var(--muted);">Finance Minister · Budget architect</div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title mb-12">What to Watch Next</div>
+            <div style="display: flex; flex-direction: column; gap: 8px; font-size: 13px;">
+              <div style="padding: 8px 12px; background: var(--bg3); border-radius: 6px; border-left: 2px solid var(--blue);">
+                <div style="font-size: 10px; color: var(--blue); font-family: var(--font-mono); margin-bottom: 3px;">APR 15, 2026</div>
+                CPI data release — key for June cut decision
+              </div>
+              <div style="padding: 8px 12px; background: var(--bg3); border-radius: 6px; border-left: 2px solid var(--orange);">
+                <div style="font-size: 10px; color: var(--orange); font-family: var(--font-mono); margin-bottom: 3px;">MAY 2026</div>
+                Southwest monsoon forecast — food inflation risk
+              </div>
+              <div style="padding: 8px 12px; background: var(--bg3); border-radius: 6px; border-left: 2px solid var(--accent);">
+                <div style="font-size: 10px; color: var(--accent); font-family: var(--font-mono); margin-bottom: 3px;">JUN 4–6, 2026</div>
+                MPC meeting — 68% probability of rate cut
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ===== SCRIPTS ===== -->
+<script>
+  // ===== USER DATA =====
+  let userData = {
+    name: 'Rohan',
+    investorType: '',
+    income: '',
+    risk: '',
+    goals: [],
+    sectors: [],
+    lang: 'English'
+  };
+
+  // ===== ONBOARDING =====
+  let currentStep = 1;
+  const totalSteps = 4;
+
+  function nextStep() {
+    if (currentStep === 1) {
+      const name = document.getElementById('userName').value.trim();
+      if (name) userData.name = name.split(' ')[0];
+    }
+
+    if (currentStep < totalSteps) {
+      document.getElementById('step' + currentStep).classList.remove('active');
+      document.getElementById('sp' + currentStep).classList.remove('active');
+      document.getElementById('sp' + currentStep).classList.add('done');
+      currentStep++;
+      document.getElementById('step' + currentStep).classList.add('active');
+      document.getElementById('sp' + currentStep).classList.add('active');
+      document.getElementById('prevBtn').style.display = 'block';
+      if (currentStep === totalSteps) {
+        document.getElementById('nextBtn').textContent = 'Enter MarketMind ✦';
+      }
+    } else {
+      launchApp();
+    }
+  }
+
+  function prevStep() {
+    if (currentStep > 1) {
+      document.getElementById('step' + currentStep).classList.remove('active');
+      document.getElementById('sp' + currentStep).classList.remove('active');
+      currentStep--;
+      document.getElementById('step' + currentStep).classList.add('active');
+      document.getElementById('sp' + currentStep).classList.remove('done');
+      document.getElementById('sp' + currentStep).classList.add('active');
+      document.getElementById('nextBtn').textContent = 'Continue →';
+      if (currentStep === 1) document.getElementById('prevBtn').style.display = 'none';
+    }
+  }
+
+  function launchApp() {
+    const name = document.getElementById('userName').value.trim() || 'Rohan';
+    const firstName = name.split(' ')[0];
+    userData.name = firstName;
+
+    // Save to localStorage
+    localStorage.setItem('mm_user', JSON.stringify({ name: firstName, onboarded: true }));
+
+    document.getElementById('onboardingOverlay').style.display = 'none';
+    document.getElementById('mainApp').style.display = 'flex';
+
+    document.getElementById('heroName').textContent = firstName;
+    document.getElementById('sidebarName').textContent = name || 'Rohan Mehta';
+    document.getElementById('sidebarAvatar').textContent = firstName.charAt(0).toUpperCase();
+
+    initTicker();
+    calcFire();
+  }
+
+  function toggleTag(el, groupId) {
+    const group = document.getElementById(groupId);
+    group.querySelectorAll('.tag-option').forEach(t => t.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  function toggleTagMulti(el) {
+    el.classList.toggle('selected');
+  }
+
+  // ===== TICKER TAPE =====
+  function initTicker() {
+    const stocks = [
+      { sym: 'NIFTY 50', val: '24,832.10', chg: '+1.24%', up: true },
+      { sym: 'SENSEX', val: '81,147.22', chg: '-0.31%', up: false },
+      { sym: 'RELIANCE', val: '₹2,812', chg: '+1.8%', up: true },
+      { sym: 'HDFCBANK', val: '₹1,648', chg: '+1.2%', up: true },
+      { sym: 'INFY', val: '₹1,810', chg: '-1.9%', up: false },
+      { sym: 'TCS', val: '₹3,924', chg: '-0.8%', up: false },
+      { sym: 'WIPRO', val: '₹452', chg: '-2.1%', up: false },
+      { sym: 'TATAMOTORS', val: '₹962', chg: '+2.4%', up: true },
+      { sym: 'BAJFINANCE', val: '₹7,124', chg: '+3.1%', up: true },
+      { sym: 'ZOMATO', val: '₹198', chg: '+4.2%', up: true },
+      { sym: 'GOLD (MCX)', val: '₹87,240', chg: '+0.6%', up: true },
+      { sym: 'USDINR', val: '83.24', chg: '-0.1%', up: false },
+    ];
+
+    const html = [...stocks, ...stocks].map(s => `
+      <div class="ticker-item">
+        <span class="ticker-sym">${s.sym}</span>
+        <span class="ticker-val">${s.val}</span>
+        <span class="ticker-chg ${s.up ? 'up' : 'dn'}">${s.chg}</span>
+      </div>
+    `).join('');
+
+    const el = document.getElementById('tickerInner');
+    if (el) el.innerHTML = html;
+  }
+
+  // ===== NAVIGATION =====
+  function showPage(pageId) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+    const page = document.getElementById('page-' + pageId);
+    if (page) page.classList.add('active');
+
+    const titles = {
+      dashboard: 'Dashboard',
+      radar: 'Opportunity Radar',
+      charts: 'Chart Pattern Intelligence',
+      portfolio: 'My Portfolio',
+      news: 'AI News Feed',
+      chat: 'Market ChatGPT',
+      story: 'Story Arc Tracker',
+      score: 'Money Health Score',
+      fire: 'FIRE Path Planner'
+    };
+
+    document.getElementById('topbarTitle').textContent = titles[pageId] || pageId;
+
+    // Activate nav item
+    document.querySelectorAll('.nav-item').forEach(n => {
+      if (n.getAttribute('onclick') && n.getAttribute('onclick').includes("'" + pageId + "'")) {
+        n.classList.add('active');
+      }
+    });
+  }
+
+  // ===== TABS =====
+  function switchTab(el, group) {
+    const container = el.closest('.tabs');
+    container.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  // ===== TIMEFRAME =====
+  function setTimeframe(el, tf) {
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  // ===== CHAT =====
+  const chatResponses = {
+    default: 'Great question. Based on your portfolio (RELIANCE, HDFCBANK, INFY) and your moderate risk profile, here is what the data suggests: The current macro environment favors rate-sensitive sectors. Your HDFC Bank position looks strong. Consider rebalancing INFY exposure given IT sector headwinds.',
+    'sip': 'For your ₹15,000/month SIP budget, I recommend: ₹7,000 in Mirae Asset Large & Mid Cap (diversified), ₹5,000 in HDFC Flexi Cap (momentum), ₹3,000 in SBI Small Cap (high risk/return). This gives you broad coverage with growth potential. Expected 15% CAGR over 7 years.',
+    'tax': 'For ₹12L salary: Old regime saves ₹1.14L tax with all deductions (80C: ₹1.5L, HRA, 80D etc). New regime tax = ₹1.10L. You save ₹4,000 more in old regime. But if you have no major deductions, new regime wins. Upload Form 16 for exact calculation.',
+    'hdfc': 'HDFC Bank analysis: Strong Buy. Insider acquisition of 1.4L shares is a high-confidence bullish signal (78% historical accuracy). Q4 results beat: net profit +11% QoQ. Technical: Cup & Handle forming, breakout target ₹1,820. Your current position is at ₹1,648 — 10% upside potential.'
+  };
+
+  function sendChat() {
+    const input = document.getElementById('chatInput');
+    const msg = input.value.trim();
+    if (!msg) return;
+
+    const wrap = document.getElementById('chatWrap');
+
+    const userBubble = document.createElement('div');
+    userBubble.className = 'chat-bubble chat-user';
+    userBubble.textContent = msg;
+    wrap.appendChild(userBubble);
+
+    input.value = '';
+
+    setTimeout(() => {
+      const aiBubble = document.createElement('div');
+      aiBubble.className = 'chat-bubble chat-ai';
+
+      let response = chatResponses.default;
+      const lower = msg.toLowerCase();
+      if (lower.includes('sip')) response = chatResponses['sip'];
+      if (lower.includes('tax')) response = chatResponses['tax'];
+      if (lower.includes('hdfc')) response = chatResponses['hdfc'];
+
+      aiBubble.innerHTML = `<div class="chat-ai-label">◆ MARKETMIND AI</div>${response}`;
+      wrap.appendChild(aiBubble);
+      aiBubble.scrollIntoView({ behavior: 'smooth' });
+    }, 800);
+  }
+
+  // ===== TAX CALC =====
+  function calcTax() {
+    const sal = parseInt(document.getElementById('taxSalary').value) || 1200000;
+    const newRegime = sal <= 1200000 ? 0 : Math.round((sal - 1200000) * 0.3);
+    const oldDeductions = 150000 + 50000 + 25000;
+    const oldTaxable = Math.max(sal - oldDeductions - 50000, 0);
+    let oldTax = 0;
+    if (oldTaxable > 1000000) oldTax = 112500 + (oldTaxable - 1000000) * 0.3;
+    else if (oldTaxable > 500000) oldTax = 12500 + (oldTaxable - 500000) * 0.2;
+    else if (oldTaxable > 250000) oldTax = (oldTaxable - 250000) * 0.05;
+
+    const saved = Math.max(oldTax - newRegime, 0);
+    const winner = oldTax > newRegime ? 'New Regime' : 'Old Regime';
+    const saving = Math.abs(oldTax - newRegime);
+
+    const result = document.getElementById('taxResult');
+    result.style.display = 'block';
+    result.innerHTML = `
+      <strong style="color: var(--accent); display: block; margin-bottom: 8px;">◆ ${winner} saves you ₹${saving.toLocaleString('en-IN')}</strong>
+      Old Regime tax: ₹${Math.round(oldTax).toLocaleString('en-IN')}<br>
+      New Regime tax: ₹${Math.round(newRegime).toLocaleString('en-IN')}<br>
+      <span style="color: var(--muted); font-size: 11px; margin-top: 6px; display: block;">Assumes 80C: ₹1.5L, HRA: ₹50K, 80D: ₹25K. Rough estimate only.</span>
+    `;
+  }
+
+  // ===== FIRE CALC =====
+  function calcFire() {
+    const age = parseInt(document.getElementById('fireAge')?.value) || 30;
+    const retire = parseInt(document.getElementById('fireRetire')?.value) || 50;
+    const expense = parseInt(document.getElementById('fireExpense')?.value) || 60000;
+    const sip = parseInt(document.getElementById('fireSip')?.value) || 25000;
+    const rate = parseInt(document.getElementById('fireRate')?.value) || 12;
+
+    const years = retire - age;
+    const annualExpense = expense * 12;
+    const fireCorpus = annualExpense * 25; // 4% withdrawal rule
+
+    const monthlyRate = rate / 100 / 12;
+    const n = years * 12;
+    const fv = sip * ((Math.pow(1 + monthlyRate, n) - 1) / monthlyRate) * (1 + monthlyRate);
+
+    const fmt = (n) => '₹' + (n >= 10000000 ? (n/10000000).toFixed(2) + 'Cr' : n >= 100000 ? (n/100000).toFixed(1) + 'L' : Math.round(n).toLocaleString('en-IN'));
+
+    const corpusEl = document.getElementById('fireCorpus');
+    const projectedEl = document.getElementById('fireProjected');
+    const statusEl = document.getElementById('fireStatus');
+    const detailEl = document.getElementById('fireDetail');
+
+    if (corpusEl) corpusEl.textContent = fmt(fireCorpus);
+    if (projectedEl) {
+      projectedEl.textContent = fmt(fv);
+      projectedEl.style.color = fv >= fireCorpus ? 'var(--green)' : 'var(--red)';
+    }
+
+    if (statusEl) {
+      if (fv >= fireCorpus) {
+        statusEl.textContent = `You're on track for FIRE at ${retire}! ✦`;
+        const surplus = ((fv - fireCorpus) / fireCorpus * 100).toFixed(0);
+        if (detailEl) detailEl.textContent = `With ₹${sip.toLocaleString('en-IN')}/mo SIP at ${rate}% returns, you'll accumulate ${fmt(fv)} — ${surplus}% above your FIRE goal.`;
+      } else {
+        statusEl.textContent = `Gap to fill — increase SIP or retire later`;
+        if (detailEl) detailEl.textContent = `You'll accumulate ${fmt(fv)} but need ${fmt(fireCorpus)}. Increase SIP by ₹${Math.round((fireCorpus - fv) / n).toLocaleString('en-IN')}/mo or adjust retirement age.`;
+      }
+    }
+  }
+
+  // ===== CHECK RETURNING USER =====
+  window.onload = () => {
+    const saved = localStorage.getItem('mm_user');
+    if (saved) {
+      try {
+        const u = JSON.parse(saved);
+        if (u.onboarded) {
+          document.getElementById('onboardingOverlay').style.display = 'none';
+          document.getElementById('mainApp').style.display = 'flex';
+          document.getElementById('heroName').textContent = u.name || 'Rohan';
+          document.getElementById('sidebarName').textContent = u.name || 'User';
+          document.getElementById('sidebarAvatar').textContent = (u.name || 'R').charAt(0).toUpperCase();
+          initTicker();
+          calcFire();
+          return;
+        }
+      } catch(e) {}
+    }
+  };
+</script>
+</body>
+</html>
