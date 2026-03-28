@@ -1,4 +1,4 @@
-# Market-Mind-_-01
+# Market Mind _ 01
 MarketMind is built using a multi-agent AI architecture designed to convert raw financial data into personalized insights for Indian retail investors. The system consists of five main layers: the User Layer, Frontend Layer, AI Orchestration Layer, AI Agent Layer, and Data Layer.
 
 Users interact with the platform through a web dashboard where they can view market signals, read AI-summarized financial news, analyze their portfolio, and chat with an AI assistant. The frontend sends requests to a Dashboard Orchestrator, which determines which specialized AI agent should handle the task.
